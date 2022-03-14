@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 Device deviceFromJson(String str) => Device.fromJson(json.decode(str));

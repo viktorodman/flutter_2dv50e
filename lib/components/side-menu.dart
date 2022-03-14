@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2dv50e/main.dart';
-import 'package:flutter_2dv50e/models/device.dart';
-import 'package:flutter_2dv50e/providers/device-provider.dart';
-import 'package:flutter_2dv50e/providers/store-provider.dart';
+import 'package:flutter_2dv50e/providers/main-page-provider.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget {
@@ -37,7 +34,7 @@ class MenuItem extends StatelessWidget {
     return ListTile(
       title: Text(text),
       onTap: () async {
-        await context.read<DeviceProvider>().getAllDevices();
+        context.read<MainPageProvider>().state = MainPageState.devices;
       },
     );
   }

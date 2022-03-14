@@ -8,8 +8,6 @@ class Store with ChangeNotifier {
 
   getListItems() async {
     _listItems = await fetchItem();
-    print('In store');
-    print(_listItems);
     notifyListeners();
   }
 }

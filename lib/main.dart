@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2dv50e/components/side-menu.dart';
 import 'package:flutter_2dv50e/models/user.dart';
 import 'package:flutter_2dv50e/routes/routes.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       builder: (context, child) {
-        return MaterialApp(
+        return const MaterialApp(
           initialRoute: RouteManager.login,
           onGenerateRoute: RouteManager.generateRoute,
         );

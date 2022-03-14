@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Item {
   final int userId;
   final int id;
@@ -20,10 +18,10 @@ class Item {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['userId'] = this.userId;
-    data['id'] = this.id;
-    data['title'] = this.title;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['userId'] = userId;
+    data['id'] = id;
+    data['title'] = title;
     return data;
   }
 }

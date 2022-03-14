@@ -11,19 +11,19 @@ class RouteManager {
     switch (settings.name) {
       case login:
         return MaterialPageRoute(
-          builder: (context) => Login(),
+          builder: (context) => const Login(),
         );
       case dashboard:
         return MaterialPageRoute(
-          builder: (context) => Dashboard(),
+          builder: (context) => const Dashboard(),
         );
 
       case publicDisplay:
         return MaterialPageRoute(
-          builder: (context) => Text('publicDisplay'),
+          builder: (context) => const Text('publicDisplay'),
         );
       default:
-        throw FormatException('Route not found');
+        throw const FormatException('Route not found');
     }
   }
 }

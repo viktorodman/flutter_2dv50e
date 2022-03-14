@@ -8,8 +8,6 @@ class DeviceProvider with ChangeNotifier {
 
   getAllDevices() async {
     _devices = await getDevices();
-    print('In store');
-    print(_devices);
     notifyListeners();
   }
 }
