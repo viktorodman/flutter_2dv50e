@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum MainPageState { none, devices, map, stats }
+enum MainPageState { none, devices, map, stats, graph }
 
 class MainPageProvider with ChangeNotifier {
   MainPageState _state = MainPageState.devices;
@@ -9,5 +9,6 @@ class MainPageProvider with ChangeNotifier {
 
   set state(MainPageState newState) {
     _state = newState;
+    notifyListeners();
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/components/main-area.dart';
-import 'package:flutter_2dv50e/components/side-menu.dart';
+import 'package:flutter_2dv50e/components/menu/side-menu.dart';
 import 'package:flutter_2dv50e/providers/device-provider.dart';
+import 'package:flutter_2dv50e/providers/graph-provider.dart';
 import 'package:flutter_2dv50e/providers/main-page-provider.dart';
+import 'package:flutter_2dv50e/providers/stats-provider.dart';
 import 'package:flutter_2dv50e/providers/store-provider.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +24,12 @@ class Dashboard extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => MainPageProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => StatsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => GraphProvider(),
+        )
       ],
       child: Scaffold(
         body: Row(
@@ -31,7 +39,10 @@ class Dashboard extends StatelessWidget {
             ),
             Expanded(
               flex: 4,
-              child: MainArea(),
+              child: Padding(
+                padding: EdgeInsets.all(2),
+                child: MainArea(),
+              ),
             )
           ],
         ),

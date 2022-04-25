@@ -19,9 +19,22 @@ class MyApp extends StatelessWidget {
         ),
       ],
       builder: (context, child) {
-        return const MaterialApp(
+        return MaterialApp(
           initialRoute: RouteManager.login,
           onGenerateRoute: RouteManager.generateRoute,
+          theme: ThemeData(
+            primaryColor: Color.fromRGBO(96, 125, 139, 1),
+            textTheme: TextTheme(
+                headline4: TextStyle(
+              color: Color.fromRGBO(96, 125, 139, 1),
+            )),
+            /* cardColor: const Color.fromRGBO(96, 125, 139, 1), */
+            scaffoldBackgroundColor: Colors.white,
+            drawerTheme: DrawerThemeData(
+              backgroundColor: const Color.fromRGBO(96, 125, 139, 1),
+              elevation: 1.0,
+            ),
+          ),
         );
       },
     );
