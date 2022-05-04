@@ -28,11 +28,11 @@ class SideMenu extends StatelessWidget {
             icon: Icons.device_hub_outlined,
           ),
           MenuItem(text: 'Map', pageState: MainPageState.map, icon: Icons.map),
-          MenuItem(
+          /* MenuItem(
             text: 'None',
             pageState: MainPageState.none,
             icon: Icons.mic_none,
-          ),
+          ), */
         ],
       ),
     );

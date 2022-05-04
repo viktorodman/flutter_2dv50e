@@ -37,6 +37,9 @@ dependencies:
   provider: ^6.0.2
   http: ^0.13.4
   charts_flutter: ^0.12.0
+  google_maps_flutter: ^2.1.4
+  google_maps_flutter_web: ^0.3.2+1
+  label_marker: ^1.0.1
 
 dev_dependencies:
   flutter_test:
