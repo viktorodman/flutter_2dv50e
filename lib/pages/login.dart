@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2dv50e/api/auth.dart';
 import 'package:flutter_2dv50e/models/user.dart';
+import 'package:flutter_2dv50e/providers/auth-provider.dart';
 import 'package:flutter_2dv50e/routes/routes.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +16,13 @@ class _LoginState extends State<Login> {
   TextEditingController usernameController = TextEditingController();
   final _submit = GlobalKey<FormState>();
 
-  void submitLogin() {
-    context.read<User>().username = usernameController.text;
-    Navigator.of(context).pushNamed(RouteManager.dashboard);
+  void submitLogin() async {
+    /* context.read<AuthProvider>().user.username = usernameController.text; */
+    bool loginSuccessful = await AuthService.login("temp", "temp");
+
+    if (loginSuccessful) {
+      Navigator.of(context).pushNamed(RouteManager.dashboard);
+    }
   }
 
   @override

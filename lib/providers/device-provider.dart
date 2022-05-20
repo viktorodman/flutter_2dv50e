@@ -7,7 +7,7 @@ class DeviceProvider with ChangeNotifier {
   List<Device> get devices => _devices;
 
   getAllDevices() async {
-    _devices = await getDevices();
+    _devices = await DeviceService().getDevices();
     notifyListeners();
   }
 }

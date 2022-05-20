@@ -26,10 +26,7 @@ class _DevicesContentState extends State<DevicesContent> {
   }
 
   Future<List<Device>> getValue() async {
-    print('YEAH2');
     await context.read<DeviceProvider>().getAllDevices();
-
-    print('YEAH3');
     return context.read<DeviceProvider>().devices;
     // return Provider.of<DeviceProvider>(context, listen: false).devices;
   }
@@ -57,6 +54,7 @@ class _DevicesContentState extends State<DevicesContent> {
                     padding: const EdgeInsets.only(left: 40.0, right: 40.0),
                     child: Center(
                       child: ListView.builder(
+                        controller: ScrollController(),
                         shrinkWrap: true,
                         itemCount: snapshot.data?.length,
                         itemBuilder: (context, index) {
