@@ -34,27 +34,63 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(widget.title),
-        DropdownButton(
-          value: selected,
-          items: this.widget.data!.map<DropdownMenuItem<String>>(
-            (Device device) {
-              return DropdownMenuItem<String>(
-                child: Text(device.name),
-                value: device.name,
-              );
+    return Expanded(
+      child: Column(
+        /* mainAxisAlignment: MainAxisAlignment.start, */
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.title),
+          DropdownButton(
+            value: selected,
+            items: this.widget.data!.map<DropdownMenuItem<String>>(
+              (Device device) {
+                return DropdownMenuItem<String>(
+                  child: Text(device.name),
+                  value: device.name,
+                );
+              },
+            ).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selected = newValue;
+              });
+              widget.callback(newValue);
             },
-          ).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              selected = newValue;
-            });
-            widget.callback(newValue);
-          },
-        ),
-      ],
+          ),
+          Column(
+            /* crossAxisAlignment: CrossAxisAlignment.start, */
+            children: [
+              ListTile(
+                title: const Text("prop1"),
+                leading: Radio(
+                    value: YeahButton.first,
+                    groupValue: YeahButton.first,
+                    onChanged: (YeahButton? val) {
+                      print(val);
+                    }),
+              ),
+              ListTile(
+                title: const Text("prop2"),
+                leading: Radio(
+                    value: YeahButton.first,
+                    groupValue: YeahButton.first,
+                    onChanged: (YeahButton? val) {
+                      print(val);
+                    }),
+              ),
+              ListTile(
+                title: const Text("prop3"),
+                leading: Radio(
+                    value: YeahButton.first,
+                    groupValue: YeahButton.first,
+                    onChanged: (YeahButton? val) {
+                      print(val);
+                    }),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

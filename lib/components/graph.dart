@@ -78,101 +78,27 @@ class _GraphContentState extends State<GraphContent> {
 
             return Column(
               children: [
-                Expanded(
-                  child: Row(
-                    /* mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start, */
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DeviceDropdown(
-                              data: snapshot.data,
-                              title: "First Device",
-                              callback: (String? yeah) => setFirstDevice(yeah),
-                            ),
-                            Column(
-                              children: [
-                                ListTile(
-                                  title: const Text("prop1"),
-                                  leading: Radio(
-                                      value: YeahButton.first,
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                                ListTile(
-                                  title: const Text("prop2"),
-                                  leading: Radio(
-                                      value: YeahButton.first, 
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                                ListTile(
-                                  title: const Text("prop3"),
-                                  leading: Radio(
-                                      value: YeahButton.first,
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DeviceDropdown(
-                              data: snapshot.data,
-                              title: "Second Devices",
-                              callback: (String? yeah) => setFirstDevice(yeah),
-                            ),
-                            Column(
-                              children: [
-                                ListTile(
-                                  title: const Text("prop1"),
-                                  leading: Radio(
-                                      value: YeahButton.first,
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                                ListTile(
-                                  title: const Text("prop2"),
-                                  leading: Radio(
-                                      value: YeahButton.first,
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                                ListTile(
-                                  title: const Text("prop3"),
-                                  leading: Radio(
-                                      value: YeahButton.first,
-                                      groupValue: YeahButton.first,
-                                      onChanged: (YeahButton? val) {
-                                        print(val);
-                                      }),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    DeviceDropdown(
+                      data: snapshot.data,
+                      title: "First Device",
+                      callback: (String? yeah) => setFirstDevice(yeah),
+                    ),
+                    DeviceDropdown(
+                      data: snapshot.data,
+                      title: "Second Devices",
+                      callback: (String? yeah) => setFirstDevice(yeah),
+                    ),
+                    const Expanded(
+                      child: SizedBox(),
+                      flex: 4,
+                    )
+                  ],
                 ),
-                Expanded(child: PointsLineChart.withSampleData())
+                Expanded(flex: 3, child: PointsLineChart.withSampleData())
               ],
             );
           } else {
