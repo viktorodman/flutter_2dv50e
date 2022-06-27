@@ -53,7 +53,7 @@ class MapsInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.topLeft,
+      alignment: Alignment.topRight,
       child: Container(
         color: Color.fromRGBO(96, 125, 139, 1),
         width: 200,

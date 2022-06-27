@@ -1,8 +1,6 @@
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
-import 'package:flutter_2dv50e/api/request.dart';
 import 'package:flutter_2dv50e/components/graphs/date-time-line-chart.dart';
-import 'package:flutter_2dv50e/components/page-title.dart';
+import 'package:flutter_2dv50e/components/graphs/device-dropdown.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 import 'package:flutter_2dv50e/models/graph-data.dart';
 import 'package:flutter_2dv50e/providers/device-provider.dart';
@@ -20,11 +18,14 @@ class GraphContent extends StatefulWidget {
 
 class _GraphContentState extends State<GraphContent> {
   late Future<GraphData> _value;
+  late Future<List<Device>> _devices;
+  String dropDown1Value = "xD";
 
   @override
   initState() {
     super.initState();
     _value = getValue();
+    _devices = getDevices();
   }
 
   Future<GraphData> getValue() async {
@@ -37,13 +38,26 @@ class _GraphContentState extends State<GraphContent> {
     // return Provider.of<DeviceProvider>(context, listen: false).devices;
   }
 
+  Future<List<Device>> getDevices() async {
+    await context.read<DeviceProvider>().getAllDevices();
+
+    return context.read<DeviceProvider>().devices;
+  }
+
+  void setFirstDevice(String? deviceName) {
+    print(deviceName);
+    setState(() {
+      dropDown1Value = deviceName!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GraphData>(
-      future: _value,
+    return FutureBuilder<List<Device>>(
+      future: _devices,
       builder: (
         BuildContext context,
-        AsyncSnapshot<GraphData> snapshot,
+        AsyncSnapshot<List<Device>> snapshot,
       ) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -51,7 +65,7 @@ class _GraphContentState extends State<GraphContent> {
           if (snapshot.hasError) {
             return const Center(child: Text('Error'));
           } else if (snapshot.hasData) {
-            return Padding(
+            /* return Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
@@ -59,6 +73,107 @@ class _GraphContentState extends State<GraphContent> {
                   DateTimeLineChart(data: snapshot.data!.values)
                 ],
               ),
+            ); */
+            List<DropdownMenuItem<dynamic>> dropDownItems = [];
+
+            return Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    /* mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start, */
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DeviceDropdown(
+                              data: snapshot.data,
+                              title: "First Device",
+                              callback: (String? yeah) => setFirstDevice(yeah),
+                            ),
+                            Column(
+                              children: [
+                                ListTile(
+                                  title: const Text("prop1"),
+                                  leading: Radio(
+                                      value: YeahButton.first,
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                                ListTile(
+                                  title: const Text("prop2"),
+                                  leading: Radio(
+                                      value: YeahButton.first, 
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                                ListTile(
+                                  title: const Text("prop3"),
+                                  leading: Radio(
+                                      value: YeahButton.first,
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DeviceDropdown(
+                              data: snapshot.data,
+                              title: "Second Devices",
+                              callback: (String? yeah) => setFirstDevice(yeah),
+                            ),
+                            Column(
+                              children: [
+                                ListTile(
+                                  title: const Text("prop1"),
+                                  leading: Radio(
+                                      value: YeahButton.first,
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                                ListTile(
+                                  title: const Text("prop2"),
+                                  leading: Radio(
+                                      value: YeahButton.first,
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                                ListTile(
+                                  title: const Text("prop3"),
+                                  leading: Radio(
+                                      value: YeahButton.first,
+                                      groupValue: YeahButton.first,
+                                      onChanged: (YeahButton? val) {
+                                        print(val);
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child: PointsLineChart.withSampleData())
+              ],
             );
           } else {
             return const Center(child: Text('Empty data'));

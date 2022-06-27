@@ -1,10 +1,5 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_2dv50e/api/auth.dart';
-import 'package:flutter_2dv50e/models/user.dart';
 import 'package:flutter_2dv50e/routes/routes.dart';
-import 'package:provider/provider.dart';
 
 String _initialRoute = RouteManager.dashboard;
 

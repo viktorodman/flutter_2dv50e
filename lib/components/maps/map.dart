@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/api/device.dart';
 import 'package:flutter_2dv50e/components/maps/maps-info.dart';
 import 'package:flutter_2dv50e/models/device.dart';
-import 'package:flutter_2dv50e/models/test-thing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:label_marker/label_marker.dart';
 import 'package:flutter_2dv50e/providers/device-provider.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class DeviceMap extends StatefulWidget {
   const DeviceMap({Key? key}) : super(key: key);
@@ -44,7 +44,8 @@ class _DeviceMapState extends State<DeviceMap> {
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(56.667275626479274, 16.293136576664427),
-    zoom: 17.4746,
+    zoom: 16.0000,
+    /* zoom: 15.4746, */
   );
 
   static final CameraPosition _kLake = CameraPosition(
@@ -60,11 +61,51 @@ class _DeviceMapState extends State<DeviceMap> {
     Map<String, dynamic> properties,
   ) {
     List<Widget> deviceDescriptions = <Widget>[];
-    deviceDescriptions.add(Text("$description"));
+    final f = new DateFormat('yyyy-MM-dd hh:mm');
+    DateTime date = DateTime.parse(properties["dateObserved"]);
+
+    deviceDescriptions.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "$description",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          /* SizedBox(width: 20), */
+          Text(
+            "${f.format(date)}",
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey),
+          ),
+        ],
+      ),
+    ));
+
+    deviceDescriptions.add(Expanded(
+      child: Divider(
+        color: Colors.black12,
+      ),
+    ));
+
     properties.entries.forEach((element) {
-      deviceDescriptions.add(
-        Chip(label: Text("${element.key} : ${element.value}")),
-      );
+      if (element.key != "dateObserved") {
+        deviceDescriptions.add(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              child: Text(
+                "${element.key} : ${element.value}",
+              ),
+            ),
+          ),
+        );
+        deviceDescriptions.add(SizedBox(
+          height: 5,
+        ));
+      }
     });
 
     return deviceDescriptions;
@@ -89,19 +130,49 @@ class _DeviceMapState extends State<DeviceMap> {
                 Map<String, dynamic> yeah = await DeviceService()
                     .stufftesting(element.id, element.deviceType);
                 showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: Text("Device: ${element.name}"),
-                    content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: createDeviceDescription(element.description,
-                            yeah) /* [
-                        Text(" ${element.description}"),
-                        Text(yeah.keys),
-                      ], */
+                    context: context,
+                    builder: (BuildContext context) => SimpleDialog(
+                        titlePadding: EdgeInsets.all(8),
+                        title: Container(
+                          child: Text(
+                            "Device: ${element.name}",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
                         ),
-                  ),
-                );
+                        children:
+                            createDeviceDescription(element.description, yeah)
+                        /* [
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Container(
+                                child: Text("1"),
+                              ),
+                            ),
+                            Container(
+                              child: Text("2"),
+                            ),
+                            Container(
+                              child: Text("3"),
+                            ),
+                          ], */
+                        )
+                    /* AlertDialog(
+                    title: Text("Device: ${element.name}"),
+                    content: Container(
+
+                      color: Colors.white,
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: createDeviceDescription(element.description,
+                              yeah) /* [
+                          Text(" ${element.description}"),
+                          Text(yeah.keys),
+                        ], */
+                          ),
+                    ),
+                  ), */
+                    );
               }),
         )
             .then((value) {

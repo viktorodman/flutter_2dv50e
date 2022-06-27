@@ -1,85 +1,81 @@
-import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter_2dv50e/models/graph-data.dart';
+import 'package:flutter/material.dart';
 
-class DateTimeLineChart extends StatelessWidget {
-  final List<Value> data;
+class PointsLineChart extends StatelessWidget {
+  final List<charts.Series<dynamic, DateTime>> seriesList;
+  final bool animate;
 
-  DateTimeLineChart({required this.data});
+  PointsLineChart(this.seriesList, {required this.animate});
+
+  /// Creates a [LineChart] with sample data and no transition.
+  factory PointsLineChart.withSampleData() {
+    return new PointsLineChart(
+      _createSampleData(),
+      // Disable animations for image tests.
+      animate: false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<Value, DateTime>> seriesHumid = [
-      charts.Series(
-          id: "humidity",
-          data: data,
-          domainFn: (Value series, _) => series.created,
-          measureFn: (Value series, _) => series.humidity,
-          colorFn: (Value series, _) => charts.Color.black),
-    ];
-    List<charts.Series<Value, DateTime>> seriesTemp = [
-      charts.Series(
-          id: "temperature",
-          data: data,
-          domainFn: (Value series, _) => series.created,
-          measureFn: (Value series, _) => series.temperature,
-          colorFn: (Value series, _) => charts.Color.black),
-    ];
-
-    List<charts.Series<Value, DateTime>> seriesPressure = [
-      charts.Series(
-          id: "pressure",
-          data: data,
-          domainFn: (Value series, _) => series.created,
-          measureFn: (Value series, _) => series.pressure,
-          colorFn: (Value series, _) => charts.Color.black)
-    ];
-
-    return Expanded(
-      child: Row(
-        children: [
-          ChartData(seriesPressure: seriesTemp, title: "Temperature"),
-          ChartData(seriesPressure: seriesHumid, title: "Humidity"),
-          ChartData(seriesPressure: seriesPressure, title: 'Pressure'),
-        ],
-      ),
+    return new charts.TimeSeriesChart(
+      seriesList,
+      animate: animate,
+      /* defaultRenderer: new charts.LineRendererConfig(includePoints: true) */
+      primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec:
+              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5)),
+      secondaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec:
+              new charts.BasicNumericTickProviderSpec(desiredTickCount: 5)),
     );
+  }
+
+  /// Create one series with sample hard coded data.
+  static List<charts.Series<OrdinalSales, DateTime>> _createSampleData() {
+    final globalSalesData = [
+      new OrdinalSales(DateTime(2014), 5000),
+      new OrdinalSales(DateTime(2015), 25000),
+      new OrdinalSales(DateTime(2016), 100000),
+      new OrdinalSales(DateTime(2017), 750000),
+    ];
+
+    final losAngelesSalesData = [
+      new OrdinalSales(DateTime(2014), 25),
+      new OrdinalSales(DateTime(2015), 50),
+      new OrdinalSales(DateTime(2016), 10),
+      new OrdinalSales(DateTime(2017), 20),
+    ];
+
+    return [
+      new charts.Series<OrdinalSales, DateTime>(
+        id: 'Global Revenue',
+        domainFn: (OrdinalSales sales, _) => sales.year,
+        measureFn: (OrdinalSales sales, _) => sales.sales,
+        data: globalSalesData,
+      ),
+      new charts.Series<OrdinalSales, DateTime>(
+        id: 'Los Angeles Revenue',
+        domainFn: (OrdinalSales sales, _) => sales.year,
+        measureFn: (OrdinalSales sales, _) => sales.sales,
+        data: losAngelesSalesData,
+      )..setAttribute(
+          charts.measureAxisIdKey, charts.Axis.secondaryMeasureAxisId)
+    ];
   }
 }
 
-class ChartData extends StatelessWidget {
-  const ChartData({
-    Key? key,
-    required this.seriesPressure,
-    required this.title,
-  }) : super(key: key);
+/// Sample linear data type.
+class LinearSales {
+  final int year;
+  final int sales;
 
-  final List<charts.Series<Value, DateTime>> seriesPressure;
-  final String title;
+  LinearSales(this.year, this.sales);
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(title),
-          Expanded(
-            child: Card(
-              margin: EdgeInsets.all(10),
-              child: charts.TimeSeriesChart(
-                seriesPressure,
-                animate: true,
-                defaultRenderer: charts.LineRendererConfig(),
-                // Custom renderer configuration for the point series.
-                customSeriesRenderers: [
-                  charts.PointRendererConfig(customRendererId: 'customPoint')
-                ],
-                dateTimeFactory: const charts.LocalDateTimeFactory(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+class OrdinalSales {
+  final DateTime year;
+  final int sales;
+
+  OrdinalSales(this.year, this.sales);
 }
