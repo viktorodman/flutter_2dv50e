@@ -6,12 +6,14 @@ class DeviceDropdown extends StatefulWidget {
     required this.callback,
     required this.data,
     required this.title,
+    required this.color,
     Key? key,
   }) : super(key: key);
 
   final void Function(String?) callback;
   final String title;
   final List<Device>? data;
+  final Color color;
 
   @override
   State<DeviceDropdown> createState() => _DeviceDropdownState();
@@ -63,6 +65,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
               ListTile(
                 title: const Text("prop1"),
                 leading: Radio(
+                    activeColor: widget.color,
                     value: YeahButton.first,
                     groupValue: YeahButton.first,
                     onChanged: (YeahButton? val) {
@@ -72,7 +75,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
               ListTile(
                 title: const Text("prop2"),
                 leading: Radio(
-                    value: YeahButton.first,
+                    value: YeahButton.second,
                     groupValue: YeahButton.first,
                     onChanged: (YeahButton? val) {
                       print(val);
@@ -81,7 +84,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
               ListTile(
                 title: const Text("prop3"),
                 leading: Radio(
-                    value: YeahButton.first,
+                    value: YeahButton.third,
                     groupValue: YeahButton.first,
                     onChanged: (YeahButton? val) {
                       print(val);

@@ -41,7 +41,7 @@ class PointsLineChart extends StatelessWidget {
     ];
 
     final losAngelesSalesData = [
-      new OrdinalSales(DateTime(2014), 25),
+      new OrdinalSales(DateTime(2013), 25),
       new OrdinalSales(DateTime(2015), 50),
       new OrdinalSales(DateTime(2016), 10),
       new OrdinalSales(DateTime(2017), 20),

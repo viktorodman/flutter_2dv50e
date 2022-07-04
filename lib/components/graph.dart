@@ -86,11 +86,13 @@ class _GraphContentState extends State<GraphContent> {
                       data: snapshot.data,
                       title: "First Device",
                       callback: (String? yeah) => setFirstDevice(yeah),
+                      color: Colors.blue,
                     ),
                     DeviceDropdown(
                       data: snapshot.data,
                       title: "Second Devices",
                       callback: (String? yeah) => setFirstDevice(yeah),
+                      color: Colors.red,
                     ),
                     const Expanded(
                       child: SizedBox(),
