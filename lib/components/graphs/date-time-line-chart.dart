@@ -5,9 +5,14 @@ class PointsLineChart extends StatelessWidget {
   final List<charts.Series<dynamic, DateTime>> seriesList;
   final String propTitle;
   final bool animate;
+  final String firstTitle;
+  final String secondTitle;
 
   PointsLineChart(this.seriesList,
-      {required this.animate, required this.propTitle});
+      {required this.firstTitle,
+      required this.secondTitle,
+      required this.animate,
+      required this.propTitle});
 
   /// Creates a [LineChart] with sample data and no transition.
   factory PointsLineChart.withSampleData() {
@@ -16,6 +21,8 @@ class PointsLineChart extends StatelessWidget {
       // Disable animations for image tests.
       animate: false,
       propTitle: "test",
+      firstTitle: "Start title",
+      secondTitle: "End title",
     );
   }
 
@@ -25,14 +32,14 @@ class PointsLineChart extends StatelessWidget {
       seriesList,
       animate: animate,
       behaviors: [
-        charts.ChartTitle('Start title',
+        charts.ChartTitle(firstTitle,
             behaviorPosition: charts.BehaviorPosition.start,
             titleStyleSpec: charts.TextStyleSpec(
               color: charts.Color.fromHex(code: '#3a1eeb'),
             ),
             titleOutsideJustification:
                 charts.OutsideJustification.middleDrawArea),
-        charts.ChartTitle('End title',
+        charts.ChartTitle(secondTitle,
             behaviorPosition: charts.BehaviorPosition.end,
             titleStyleSpec: charts.TextStyleSpec(
               color: charts.Color.fromHex(code: '#cf2f1d'),

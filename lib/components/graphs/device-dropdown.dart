@@ -10,11 +10,13 @@ class DeviceDropdown extends StatefulWidget {
     required this.selectProp,
     required this.title,
     required this.color,
+    required this.firstSelectedPos,
     Key? key,
   }) : super(key: key);
 
   final void Function(Device?) deviceChanged;
   final String title;
+  final int firstSelectedPos;
   final List<Device>? devices;
   final Color color;
   final Map<String, dynamic> selectedDeviceProps;
@@ -34,7 +36,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
   @override
   initState() {
     super.initState();
-    selectedDevice = widget.devices![0];
+    selectedDevice = widget.devices![widget.firstSelectedPos];
   }
 
   List<Widget> createSensorProps(Map<String, dynamic>? props) {
@@ -43,18 +45,41 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
     props!.entries.forEach((element) {
       if (element.key != "dateObserved") {
         widgetList.add(
-          ListTile(
-            title: Text(element.key),
-            leading: Radio(
-                activeColor: widget.color,
-                value: widgetList.length,
-                groupValue: selectedProp,
-                onChanged: (int? val) {
-                  setState(() {
-                    selectedProp = val!;
-                  });
-                  widget.selectProp(element.key);
-                }),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: widgetList.length,
+                        groupValue: selectedProp,
+                        onChanged: (int? val) {
+                          setState(() {
+                            selectedProp = val!;
+                          });
+                          widget.selectProp(element.key);
+                        },
+                      ),
+                      Expanded(child: Text(element.key))
+                    ], /*  RadioListTile(
+                      title: Text(element.key),
+                      /* leading: Radio( */
+                      activeColor: widget.color,
+                      value: widgetList.length,
+                      groupValue: selectedProp,
+                      onChanged: (int? val) {
+                        setState(() {
+                          selectedProp = val!;
+                        });
+                        widget.selectProp(element.key);
+                      } /* ) */,
+                    ), */
+                  ),
+                ),
+              ],
+            ),
+            flex: 1,
           ),
         );
       }
@@ -66,39 +91,38 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
   //Map<String, dynamic>
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        /* mainAxisAlignment: MainAxisAlignment.start, */
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.title),
-          DropdownButton(
-            value: selectedDevice!.name,
-            items: widget.devices!.map<DropdownMenuItem<String>>(
-              (Device device) {
-                return DropdownMenuItem<String>(
-                  child: Text(device.name),
-                  value: device.name,
-                );
-              },
-            ).toList(),
-            onChanged: (String? newValue) {
-              Device? newSelectedDevice = widget.devices
-                  ?.firstWhere((element) => element.name == newValue);
-              setState(() {
-                /* selected = newValue; */
-                selectedProp = 0;
-                selectedDeviceName = newValue;
-                selectedDevice = newSelectedDevice;
-              });
-              widget.deviceChanged(newSelectedDevice);
+    return Column(
+      /* mainAxisAlignment: MainAxisAlignment.start, */
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(widget.title),
+        DropdownButton(
+          value: selectedDevice!.name,
+          items: widget.devices!.map<DropdownMenuItem<String>>(
+            (Device device) {
+              return DropdownMenuItem<String>(
+                child: Text(device.name),
+                value: device.name,
+              );
             },
-          ),
-          Column(
-              /* crossAxisAlignment: CrossAxisAlignment.start, */
-              children: createSensorProps(widget.selectedDeviceProps)),
-        ],
-      ),
+          ).toList(),
+          onChanged: (String? newValue) {
+            Device? newSelectedDevice = widget.devices
+                ?.firstWhere((element) => element.name == newValue);
+            setState(() {
+              /* selected = newValue; */
+              selectedProp = 0;
+              selectedDeviceName = newValue;
+              selectedDevice = newSelectedDevice;
+            });
+            widget.deviceChanged(newSelectedDevice);
+          },
+        ),
+        Row(
+          /* mainAxisAlignment: MainAxisAlignment.spaceAround, */
+          children: createSensorProps(widget.selectedDeviceProps),
+        ),
+      ],
     );
   }
 }

@@ -22,10 +22,15 @@ class _GraphContentState extends State<GraphContent> {
   late Future<List<dynamic>> _testStuff;
   late Future<GraphData> _value;
 
-  Map<String, dynamic> _props = {};
-  Device? selectedDeviceOne;
-  String? selectedPropOne;
-  List<DeviceSensorData> chartDataOne = [];
+  Map<String, dynamic> _firstDeviceProps = {};
+  Device? _firstSelectedDevice;
+  String? _firstSelectedProp;
+  List<DeviceSensorData> _firstChartData = [];
+
+  Map<String, dynamic> _secondDeviceProps = {};
+  Device? _secondSelectedDevice;
+  String? _secondSelectedProp;
+  List<DeviceSensorData> _secondChartData = [];
 
   @override
   initState() {
@@ -37,7 +42,9 @@ class _GraphContentState extends State<GraphContent> {
     List<dynamic> data = <dynamic>[];
     List<Device> devices = await getDevices();
     Map<String, dynamic> firstDeviceProps = await getDeviceProps(devices[0]);
-    List<DeviceSensorData> chartData = await DeviceService().getChartData(
+    Map<String, dynamic> secondDeviceProps = await getDeviceProps(devices[1]);
+
+    List<DeviceSensorData> firstChartData = await DeviceService().getChartData(
       devices[0].id,
       20,
       firstDeviceProps.keys
@@ -45,11 +52,26 @@ class _GraphContentState extends State<GraphContent> {
           .firstWhere((element) => element != 'dateObserved'),
     );
 
+    List<DeviceSensorData> secondChartData = await DeviceService().getChartData(
+      devices[1].id,
+      20,
+      secondDeviceProps.keys
+          .toList()
+          .firstWhere((element) => element != 'dateObserved'),
+    );
+
     setState(() {
-      _props = firstDeviceProps;
-      chartDataOne = chartData;
-      selectedDeviceOne = devices[0];
-      selectedPropOne = firstDeviceProps.keys
+      _firstDeviceProps = firstDeviceProps;
+      _firstChartData = firstChartData;
+      _firstSelectedDevice = devices[0];
+      _firstSelectedProp = firstDeviceProps.keys
+          .toList()
+          .firstWhere((element) => element != 'dateObserved');
+
+      _secondDeviceProps = secondDeviceProps;
+      _secondChartData = secondChartData;
+      _secondSelectedDevice = devices[1];
+      _secondSelectedProp = secondDeviceProps.keys
           .toList()
           .firstWhere((element) => element != 'dateObserved');
     });
@@ -78,11 +100,11 @@ class _GraphContentState extends State<GraphContent> {
     return context.read<DeviceProvider>().devices;
   }
 
-  Future<void> updateChartData(String? propName) async {
+  Future<void> updateFirstChartData(String? propName) async {
     Map<String, dynamic> firstDeviceProps =
-        await getDeviceProps(selectedDeviceOne!);
+        await getDeviceProps(_firstSelectedDevice!);
     List<DeviceSensorData> chartData = await DeviceService().getChartData(
-      selectedDeviceOne!.id,
+      _firstSelectedDevice!.id,
       20,
       firstDeviceProps.keys
           .toList()
@@ -90,7 +112,23 @@ class _GraphContentState extends State<GraphContent> {
     );
 
     setState(() {
-      chartDataOne = chartData;
+      _firstChartData = chartData;
+    });
+  }
+
+  Future<void> updateSecondChartData(String? propName) async {
+    Map<String, dynamic> secondDeviceProps =
+        await getDeviceProps(_secondSelectedDevice!);
+    List<DeviceSensorData> chartData = await DeviceService().getChartData(
+      _secondSelectedDevice!.id,
+      20,
+      secondDeviceProps.keys
+          .toList()
+          .firstWhere((element) => element == propName),
+    );
+
+    setState(() {
+      _secondChartData = chartData;
     });
   }
 
@@ -99,9 +137,22 @@ class _GraphContentState extends State<GraphContent> {
         .getDeviceSensorData(device!.id, device.deviceType);
 
     setState(() {
-      _props = newProps;
-      selectedDeviceOne = device;
-      selectedPropOne = newProps.keys
+      _firstDeviceProps = newProps;
+      _firstSelectedDevice = device;
+      _firstSelectedProp = newProps.keys
+          .toList()
+          .firstWhere((element) => element != 'dateObserved');
+    });
+  }
+
+  Future<void> changeSecondDevice(Device? device) async {
+    Map<String, dynamic> newProps = await DeviceService()
+        .getDeviceSensorData(device!.id, device.deviceType);
+
+    setState(() {
+      _secondDeviceProps = newProps;
+      _secondSelectedDevice = device;
+      _secondSelectedProp = newProps.keys
           .toList()
           .firstWhere((element) => element != 'dateObserved');
     });
@@ -121,19 +172,15 @@ class _GraphContentState extends State<GraphContent> {
         id: 'Global Revenue',
         domainFn: (DeviceSensorData sales, _) => sales.year,
         measureFn: (DeviceSensorData sales, _) => sales.sales,
-        data: chartDataOne,
+        data: _firstChartData,
       ),
       charts.Series<DeviceSensorData, DateTime>(
-        id: 'Los Angeles Revenue',
-        domainFn: (DeviceSensorData sales, _) => sales.year,
-        measureFn: (DeviceSensorData sales, _) => sales.sales,
-        data: [
-          DeviceSensorData(DateTime.utc(2022, 01, 22), 10),
-          DeviceSensorData(DateTime.utc(2022, 01, 23), 20),
-          DeviceSensorData(DateTime.utc(2022, 01, 24), 30),
-        ],
-      )..setAttribute(
-          charts.measureAxisIdKey, charts.Axis.secondaryMeasureAxisId)
+          id: 'Los Angeles Revenue',
+          domainFn: (DeviceSensorData sales, _) => sales.year,
+          measureFn: (DeviceSensorData sales, _) => sales.sales,
+          data: _secondChartData)
+        ..setAttribute(
+            charts.measureAxisIdKey, charts.Axis.secondaryMeasureAxisId)
     ];
   }
 
@@ -154,46 +201,58 @@ class _GraphContentState extends State<GraphContent> {
             List<DropdownMenuItem<dynamic>> dropDownItems = [];
             return Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    DeviceDropdown(
-                      devices: snapshot.data![0],
-                      selectedDeviceProps: _props,
-                      selectProp: (selectedProp) {
-                        updateChartData(selectedProp);
-                        print(selectedProp);
-                        setState(() {
-                          selectedPropOne = selectedProp;
-                        });
-                      },
-                      title: "First Device",
-                      deviceChanged: (device) => changeFirstDevice(device),
-                      color: Colors.blue,
-                    ),
-                    /*  DeviceDropdown(
-                      devices: snapshot.data![0],
-                      selectedDeviceProps: _props,
-                      title: "First Device",
-                      deviceChanged: (device) => changeFirstDevice(device),
-                      color: Colors.red,
-                    ), */
-                    const Expanded(
-                      child: SizedBox(),
-                      flex: 4,
-                    )
-                  ],
+                DeviceDropdown(
+                  devices: snapshot.data![0],
+                  selectedDeviceProps: _firstDeviceProps,
+                  firstSelectedPos: 0,
+                  selectProp: (selectedProp) {
+                    updateFirstChartData(selectedProp);
+                    print(selectedProp);
+                    setState(() {
+                      _firstSelectedProp = selectedProp;
+                    });
+                  },
+                  title: "First Device",
+                  deviceChanged: (device) => changeFirstDevice(device),
+                  color: Colors.blue,
                 ),
-                Text(selectedPropOne ?? "hhuuuu"),
-                Text(
-                    selectedDeviceOne != null ? selectedDeviceOne!.name : "ne"),
+                SizedBox(
+                  height: 30,
+                ),
+                DeviceDropdown(
+                  devices: snapshot.data![0],
+                  firstSelectedPos: 1,
+                  selectedDeviceProps: _secondDeviceProps,
+                  selectProp: (selectedProp) {
+                    updateSecondChartData(selectedProp);
+                    print(selectedProp);
+                    setState(() {
+                      _secondSelectedProp = selectedProp;
+                    });
+                  },
+                  title: "Second Device",
+                  deviceChanged: (device) => changeSecondDevice(device),
+                  color: Colors.red,
+                ),
+                /*  DeviceDropdown(
+                  devices: snapshot.data![0],
+                  selectedDeviceProps: _firstDeviceProps,
+                  title: "First Device",
+                  deviceChanged: (device) => changeFirstDevice(device),
+                  color: Colors.red,
+                ), */
+                /* const Expanded(
+                  child: SizedBox(),
+                  flex: 4,
+                ), */
                 Expanded(
-                    flex: 3,
+                    flex: 40,
                     child: PointsLineChart(
                       createGraphData(),
                       animate: true,
                       propTitle: "yeah",
+                      firstTitle: _firstSelectedProp ?? "",
+                      secondTitle: _secondSelectedProp ?? "",
                     )),
               ],
             );

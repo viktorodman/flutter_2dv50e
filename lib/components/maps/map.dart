@@ -201,7 +201,7 @@ class _DeviceMapState extends State<DeviceMap> {
             return Stack(
               children: [
                 Container(
-                  child: GoogleMap(
+                  child: new GoogleMap(
                     mapType: MapType.hybrid,
                     initialCameraPosition: _kGooglePlex,
                     markers: _markers,
