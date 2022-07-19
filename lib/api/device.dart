@@ -1,19 +1,13 @@
 import 'dart:convert';
+import 'package:flutter_2dv50e/components/graphs/date-time-line-chart.dart';
 import 'package:flutter_2dv50e/models/device-types/air-quality-observed.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 import 'package:http/http.dart' as http;
 
 class DeviceService {
   Future<List<Device>> getDevices() async {
-    //const token =
-    print('IN GET DEVICES');
-    //  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkZsb3diaWMiLCJpYXQiOjE2NDY4MTEyODl9.iB5J9FS4KMdhIn2cn3lJvYwU0deq7PnTYBcbvOHVDAw";
-
     final response =
         await http.get(Uri.parse('http://localhost:4000/v1/device/user/2'));
-    //headers: {'authorization': 'Bearer ' + token},
-    /* print(response.body); */
-
     try {
       if (response.statusCode == 200) {
         return List<Device>.from(
@@ -22,8 +16,6 @@ class DeviceService {
           ),
         );
       } else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
         throw Exception('Failed to load Item');
       }
     } catch (e) {
@@ -32,8 +24,9 @@ class DeviceService {
     return [];
   }
 
-  Future<Map<String, dynamic>> stufftesting(
+  Future<Map<String, dynamic>> getDeviceSensorData(
       String deviceId, String? deviceType) async {
+    print(deviceId);
     final response = await http
         .get(Uri.parse('http://localhost:4000/v1/request/test/$deviceId'));
 
@@ -50,6 +43,47 @@ class DeviceService {
         result[el2.key] = deviceValue["value"];
       }
     });
+
+    print(result);
+
+    return result;
+  }
+
+  Future<List<DeviceSensorData>> getChartData(
+      String deviceId, int numberOfResults, String propName) async {
+    final response = await http
+        .get(Uri.parse('http://localhost:4000/v1/request/test/$deviceId'));
+
+    List<DeviceSensorData> result = <DeviceSensorData>[];
+
+    try {
+      List<Map<String, dynamic>>.from(jsonDecode(response.body))
+          .getRange(0, 100)
+          .forEach((measurement) {
+        DateTime date = DateTime(2014);
+        dynamic val = 0;
+        measurement.entries.forEach((sensor) {
+          if (sensor.key == "dateObserved") {
+            print("Yupp: ${sensor.value["value"]}");
+            date = DateTime.parse(sensor.value["value"]);
+          } else if (sensor.key == propName) {
+            val = sensor.value["value"] != null ? sensor.value["value"] : 90;
+          }
+        });
+        if (val != null) {
+          result.add(DeviceSensorData(date, val));
+        }
+      });
+
+      /* result.forEach((element) {
+        print(element.year);
+      }); */
+    } catch (e) {
+      print(e);
+    }
+
+    print("wtf");
+    print(result.first.sales);
 
     return result;
   }

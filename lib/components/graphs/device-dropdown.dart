@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2dv50e/api/device.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 
 class DeviceDropdown extends StatefulWidget {
   const DeviceDropdown({
-    required this.callback,
-    required this.data,
+    required this.deviceChanged,
+    required this.devices,
+    required this.selectedDeviceProps,
+    required this.selectProp,
     required this.title,
     required this.color,
     Key? key,
   }) : super(key: key);
 
-  final void Function(String?) callback;
+  final void Function(Device?) deviceChanged;
   final String title;
-  final List<Device>? data;
+  final List<Device>? devices;
   final Color color;
+  final Map<String, dynamic> selectedDeviceProps;
+  final void Function(String?) selectProp;
 
   @override
   State<DeviceDropdown> createState() => _DeviceDropdownState();
@@ -22,18 +27,43 @@ class DeviceDropdown extends StatefulWidget {
 enum YeahButton { first, second, third }
 
 class _DeviceDropdownState extends State<DeviceDropdown> {
-  String? selected;
+  Device? selectedDevice;
+  String? selectedDeviceName;
+  int selectedProp = 0;
 
   @override
   initState() {
     super.initState();
-    if (widget.data![0] != null) {
-      selected = widget.data![0].name;
-    } else {
-      selected = "No Device Found";
-    }
+    selectedDevice = widget.devices![0];
   }
 
+  List<Widget> createSensorProps(Map<String, dynamic>? props) {
+    List<Widget> widgetList = <Widget>[];
+
+    props!.entries.forEach((element) {
+      if (element.key != "dateObserved") {
+        widgetList.add(
+          ListTile(
+            title: Text(element.key),
+            leading: Radio(
+                activeColor: widget.color,
+                value: widgetList.length,
+                groupValue: selectedProp,
+                onChanged: (int? val) {
+                  setState(() {
+                    selectedProp = val!;
+                  });
+                  widget.selectProp(element.key);
+                }),
+          ),
+        );
+      }
+    });
+
+    return widgetList;
+  }
+
+  //Map<String, dynamic>
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -43,8 +73,8 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
         children: [
           Text(widget.title),
           DropdownButton(
-            value: selected,
-            items: this.widget.data!.map<DropdownMenuItem<String>>(
+            value: selectedDevice!.name,
+            items: widget.devices!.map<DropdownMenuItem<String>>(
               (Device device) {
                 return DropdownMenuItem<String>(
                   child: Text(device.name),
@@ -53,45 +83,20 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
               },
             ).toList(),
             onChanged: (String? newValue) {
+              Device? newSelectedDevice = widget.devices
+                  ?.firstWhere((element) => element.name == newValue);
               setState(() {
-                selected = newValue;
+                /* selected = newValue; */
+                selectedProp = 0;
+                selectedDeviceName = newValue;
+                selectedDevice = newSelectedDevice;
               });
-              widget.callback(newValue);
+              widget.deviceChanged(newSelectedDevice);
             },
           ),
           Column(
-            /* crossAxisAlignment: CrossAxisAlignment.start, */
-            children: [
-              ListTile(
-                title: const Text("prop1"),
-                leading: Radio(
-                    activeColor: widget.color,
-                    value: YeahButton.first,
-                    groupValue: YeahButton.first,
-                    onChanged: (YeahButton? val) {
-                      print(val);
-                    }),
-              ),
-              ListTile(
-                title: const Text("prop2"),
-                leading: Radio(
-                    value: YeahButton.second,
-                    groupValue: YeahButton.first,
-                    onChanged: (YeahButton? val) {
-                      print(val);
-                    }),
-              ),
-              ListTile(
-                title: const Text("prop3"),
-                leading: Radio(
-                    value: YeahButton.third,
-                    groupValue: YeahButton.first,
-                    onChanged: (YeahButton? val) {
-                      print(val);
-                    }),
-              ),
-            ],
-          ),
+              /* crossAxisAlignment: CrossAxisAlignment.start, */
+              children: createSensorProps(widget.selectedDeviceProps)),
         ],
       ),
     );
