@@ -79,34 +79,74 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
       /* mainAxisAlignment: MainAxisAlignment.start, */
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.title),
-        DropdownButton(
-          value: selectedDevice!.name,
-          items: widget.devices!.map<DropdownMenuItem<String>>(
-            (Device device) {
-              return DropdownMenuItem<String>(
-                child: Text(device.name),
-                value: device.name,
-              );
-            },
-          ).toList(),
-          onChanged: (String? newValue) {
-            Device? newSelectedDevice = widget.devices
-                ?.firstWhere((element) => element.name == newValue);
-            setState(() {
-              /* selected = newValue; */
-              selectedProp = 0;
-              selectedDeviceName = newValue;
-              selectedDevice = newSelectedDevice;
-            });
-            widget.deviceChanged(newSelectedDevice);
-          },
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            widget.title,
+            style: TextStyle(fontSize: 16),
+          ),
         ),
-        Row(
+        Container(
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 0.5, style: BorderStyle.solid),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          /* decoration: BoxDecoration(
+              color: widget.color,
+              /* color: const Color.fromRGBO(96, 125, 139, 1), */
+              borderRadius: BorderRadius.circular(12)), */
+          child: DropdownButton(
+            /* dropdownColor: widget.color, */
+            /*   icon: Icon(Icons.sensors), */
+            /* underline: SizedBox(), */
+            underline: Container(
+              height: 2,
+              color: widget.color,
+            ),
+            /* elevation: 12, */
+            value: selectedDevice!.name,
+            style: TextStyle(color: Colors.black),
+            iconEnabledColor: Colors.black,
+            items: widget.devices!.map<DropdownMenuItem<String>>(
+              (Device device) {
+                return DropdownMenuItem<String>(
+                  child: Text(
+                    device.name,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  value: device.name,
+                );
+              },
+            ).toList(),
+            hint: Text(
+              "Device 1",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            onChanged: (String? newValue) {
+              Device? newSelectedDevice = widget.devices
+                  ?.firstWhere((element) => element.name == newValue);
+              setState(() {
+                /* selected = newValue; */
+                selectedProp = 0;
+                selectedDeviceName = newValue;
+                selectedDevice = newSelectedDevice;
+              });
+              widget.deviceChanged(newSelectedDevice);
+            },
+          ),
+        ),
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: createSensorProps(widget.selectedDeviceProps),
-        ),
+        ), */
       ],
     );
   }

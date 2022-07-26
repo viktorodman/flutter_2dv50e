@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/api/device.dart';
+import 'package:flutter_2dv50e/components/devices/device-time-select.dart';
 import 'package:flutter_2dv50e/components/graphs/date-time-line-chart.dart';
 import 'package:flutter_2dv50e/components/graphs/device-dropdown.dart';
 import 'package:flutter_2dv50e/components/graphs/sensor-dialog.dart';
@@ -32,6 +33,9 @@ class _GraphContentState extends State<GraphContent> {
   Device? _secondSelectedDevice;
   String? _secondSelectedProp;
   List<DeviceSensorData> _secondChartData = [];
+
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   initState() {
@@ -146,6 +150,32 @@ class _GraphContentState extends State<GraphContent> {
     });
   }
 
+  _selectFirstDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != _startDate)
+      setState(() {
+        _startDate = picked;
+      });
+  }
+
+  _selectSecondDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != _endDate)
+      setState(() {
+        _endDate = picked;
+      });
+  }
+
   Future<void> changeSecondDevice(Device? device) async {
     Map<String, dynamic> newProps = await DeviceService()
         .getDeviceSensorData(device!.id, device.deviceType);
@@ -201,51 +231,72 @@ class _GraphContentState extends State<GraphContent> {
           } else if (snapshot.hasData) {
             List<DropdownMenuItem<dynamic>> dropDownItems = [];
             return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => SensorDialog());
-                    },
-                    child: Text('Select Sensor')),
+                /* TextButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => SensorDialog());
+                  },
+                  child: Text('Select Sensor'),
+                ), */
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: DeviceDropdown(
-                    devices: snapshot.data![0],
-                    selectedDeviceProps: _firstDeviceProps,
-                    firstSelectedPos: 0,
-                    selectProp: (selectedProp) {
-                      updateFirstChartData(selectedProp);
-                      print(selectedProp);
-                      setState(() {
-                        _firstSelectedProp = selectedProp;
-                      });
-                    },
-                    title: "First Device",
-                    deviceChanged: (device) => changeFirstDevice(device),
-                    color: Colors.blue,
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      DeviceDropdown(
+                        devices: snapshot.data![0],
+                        selectedDeviceProps: _firstDeviceProps,
+                        firstSelectedPos: 0,
+                        selectProp: (selectedProp) {
+                          updateFirstChartData(selectedProp);
+                          print(selectedProp);
+                          setState(() {
+                            _firstSelectedProp = selectedProp;
+                          });
+                        },
+                        title: "Select first device",
+                        deviceChanged: (device) => changeFirstDevice(device),
+                        color: Colors.blue,
+                      ),
+                      SizedBox(
+                        width: 14,
+                      ),
+                      DeviceDropdown(
+                        devices: snapshot.data![0],
+                        firstSelectedPos: 1,
+                        selectedDeviceProps: _secondDeviceProps,
+                        selectProp: (selectedProp) {
+                          updateSecondChartData(selectedProp);
+                          print(selectedProp);
+                          setState(() {
+                            _secondSelectedProp = selectedProp;
+                          });
+                        },
+                        title: "Select second device",
+                        deviceChanged: (device) => changeSecondDevice(device),
+                        color: Colors.red,
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: DeviceDropdown(
-                    devices: snapshot.data![0],
-                    firstSelectedPos: 1,
-                    selectedDeviceProps: _secondDeviceProps,
-                    selectProp: (selectedProp) {
-                      updateSecondChartData(selectedProp);
-                      print(selectedProp);
-                      setState(() {
-                        _secondSelectedProp = selectedProp;
-                      });
-                    },
-                    title: "Second Device",
-                    deviceChanged: (device) => changeSecondDevice(device),
-                    color: Colors.red,
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Row(
+                    children: [
+                      DeviceTimeSelect(
+                        dateTitle: "Start",
+                        date: _startDate,
+                        onCallback: () => _selectFirstDate(context),
+                      ),
+                      DeviceTimeSelect(
+                        dateTitle: "End",
+                        date: _endDate,
+                        onCallback: () => _selectSecondDate(context),
+                      ),
+                    ],
                   ),
                 ),
                 /*  DeviceDropdown(
