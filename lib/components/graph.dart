@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/api/device.dart';
 import 'package:flutter_2dv50e/components/graphs/date-time-line-chart.dart';
 import 'package:flutter_2dv50e/components/graphs/device-dropdown.dart';
+import 'package:flutter_2dv50e/components/graphs/sensor-dialog.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 import 'package:flutter_2dv50e/models/graph-data.dart';
 import 'package:flutter_2dv50e/providers/device-provider.dart';
@@ -201,38 +202,51 @@ class _GraphContentState extends State<GraphContent> {
             List<DropdownMenuItem<dynamic>> dropDownItems = [];
             return Column(
               children: [
-                DeviceDropdown(
-                  devices: snapshot.data![0],
-                  selectedDeviceProps: _firstDeviceProps,
-                  firstSelectedPos: 0,
-                  selectProp: (selectedProp) {
-                    updateFirstChartData(selectedProp);
-                    print(selectedProp);
-                    setState(() {
-                      _firstSelectedProp = selectedProp;
-                    });
-                  },
-                  title: "First Device",
-                  deviceChanged: (device) => changeFirstDevice(device),
-                  color: Colors.blue,
+                TextButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => SensorDialog());
+                    },
+                    child: Text('Select Sensor')),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: DeviceDropdown(
+                    devices: snapshot.data![0],
+                    selectedDeviceProps: _firstDeviceProps,
+                    firstSelectedPos: 0,
+                    selectProp: (selectedProp) {
+                      updateFirstChartData(selectedProp);
+                      print(selectedProp);
+                      setState(() {
+                        _firstSelectedProp = selectedProp;
+                      });
+                    },
+                    title: "First Device",
+                    deviceChanged: (device) => changeFirstDevice(device),
+                    color: Colors.blue,
+                  ),
                 ),
                 SizedBox(
                   height: 30,
                 ),
-                DeviceDropdown(
-                  devices: snapshot.data![0],
-                  firstSelectedPos: 1,
-                  selectedDeviceProps: _secondDeviceProps,
-                  selectProp: (selectedProp) {
-                    updateSecondChartData(selectedProp);
-                    print(selectedProp);
-                    setState(() {
-                      _secondSelectedProp = selectedProp;
-                    });
-                  },
-                  title: "Second Device",
-                  deviceChanged: (device) => changeSecondDevice(device),
-                  color: Colors.red,
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: DeviceDropdown(
+                    devices: snapshot.data![0],
+                    firstSelectedPos: 1,
+                    selectedDeviceProps: _secondDeviceProps,
+                    selectProp: (selectedProp) {
+                      updateSecondChartData(selectedProp);
+                      print(selectedProp);
+                      setState(() {
+                        _secondSelectedProp = selectedProp;
+                      });
+                    },
+                    title: "Second Device",
+                    deviceChanged: (device) => changeSecondDevice(device),
+                    color: Colors.red,
+                  ),
                 ),
                 /*  DeviceDropdown(
                   devices: snapshot.data![0],
@@ -246,14 +260,15 @@ class _GraphContentState extends State<GraphContent> {
                   flex: 4,
                 ), */
                 Expanded(
-                    flex: 40,
-                    child: PointsLineChart(
-                      createGraphData(),
-                      animate: true,
-                      propTitle: "yeah",
-                      firstTitle: _firstSelectedProp ?? "",
-                      secondTitle: _secondSelectedProp ?? "",
-                    )),
+                  flex: 40,
+                  child: PointsLineChart(
+                    createGraphData(),
+                    animate: true,
+                    propTitle: "yeah",
+                    firstTitle: _firstSelectedProp ?? "",
+                    secondTitle: _secondSelectedProp ?? "",
+                  ),
+                ),
               ],
             );
           } else {

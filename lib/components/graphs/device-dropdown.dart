@@ -47,39 +47,23 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
         widgetList.add(
           Expanded(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              /* crossAxisAlignment: CrossAxisAlignment.start, */
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Radio(
-                        value: widgetList.length,
-                        groupValue: selectedProp,
-                        onChanged: (int? val) {
-                          setState(() {
-                            selectedProp = val!;
-                          });
-                          widget.selectProp(element.key);
-                        },
-                      ),
-                      Expanded(child: Text(element.key))
-                    ], /*  RadioListTile(
-                      title: Text(element.key),
-                      /* leading: Radio( */
-                      activeColor: widget.color,
-                      value: widgetList.length,
-                      groupValue: selectedProp,
-                      onChanged: (int? val) {
-                        setState(() {
-                          selectedProp = val!;
-                        });
-                        widget.selectProp(element.key);
-                      } /* ) */,
-                    ), */
-                  ),
+                Radio(
+                  value: widgetList.length,
+                  groupValue: selectedProp,
+                  onChanged: (int? val) {
+                    setState(() {
+                      selectedProp = val!;
+                    });
+                    widget.selectProp(element.key);
+                  },
                 ),
+                Expanded(child: Text(element.key))
               ],
             ),
-            flex: 1,
           ),
         );
       }
@@ -119,7 +103,8 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
           },
         ),
         Row(
-          /* mainAxisAlignment: MainAxisAlignment.spaceAround, */
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: createSensorProps(widget.selectedDeviceProps),
         ),
       ],
