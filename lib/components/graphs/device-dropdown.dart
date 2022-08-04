@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/api/device.dart';
+import 'package:flutter_2dv50e/components/graphs/sensor-dialog.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 
 class DeviceDropdown extends StatefulWidget {
@@ -147,6 +148,26 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
           mainAxisSize: MainAxisSize.min,
           children: createSensorProps(widget.selectedDeviceProps),
         ), */
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: ElevatedButton.icon(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+              Color.fromRGBO(96, 125, 139, 1),
+            )),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => SensorDialog(
+                  props: widget.selectedDeviceProps,
+                  selectProp: widget.selectProp,
+                ),
+              );
+            },
+            icon: const Icon(Icons.sensors),
+            label: Text("Select Sensor"),
+          ),
+        )
       ],
     );
   }

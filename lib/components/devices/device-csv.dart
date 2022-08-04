@@ -48,6 +48,8 @@ class DeviceCSVButton extends StatelessWidget {
             }
           }
 
+          print(link);
+
           html.window.open(link, "text");
         },
         icon: const Text(

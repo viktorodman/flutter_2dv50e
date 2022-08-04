@@ -34,8 +34,8 @@ class _GraphContentState extends State<GraphContent> {
   String? _secondSelectedProp;
   List<DeviceSensorData> _secondChartData = [];
 
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
 
   @override
   initState() {
@@ -200,15 +200,15 @@ class _GraphContentState extends State<GraphContent> {
   List<charts.Series<dynamic, DateTime>> createGraphData() {
     return [
       charts.Series<DeviceSensorData, DateTime>(
-        id: 'Global Revenue',
-        domainFn: (DeviceSensorData sales, _) => sales.year,
-        measureFn: (DeviceSensorData sales, _) => sales.sales,
+        id: 'First Device',
+        domainFn: (DeviceSensorData device, _) => device.date,
+        measureFn: (DeviceSensorData device, _) => device.data,
         data: _firstChartData,
       ),
       charts.Series<DeviceSensorData, DateTime>(
-          id: 'Los Angeles Revenue',
-          domainFn: (DeviceSensorData sales, _) => sales.year,
-          measureFn: (DeviceSensorData sales, _) => sales.sales,
+          id: 'Second Device',
+          domainFn: (DeviceSensorData device, _) => device.date,
+          measureFn: (DeviceSensorData device, _) => device.data,
           data: _secondChartData)
         ..setAttribute(
             charts.measureAxisIdKey, charts.Axis.secondaryMeasureAxisId)
@@ -231,17 +231,9 @@ class _GraphContentState extends State<GraphContent> {
           } else if (snapshot.hasData) {
             List<DropdownMenuItem<dynamic>> dropDownItems = [];
             return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                /* TextButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => SensorDialog());
-                  },
-                  child: Text('Select Sensor'),
-                ), */
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -286,38 +278,66 @@ class _GraphContentState extends State<GraphContent> {
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Row(
                     children: [
-                      DeviceTimeSelect(
-                        dateTitle: "Start",
-                        date: _startDate,
-                        onCallback: () => _selectFirstDate(context),
+                      Container(
+                        decoration: const ShapeDecoration(
+                          color: Color.fromARGB(255, 236, 238, 238),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                width: 0.5, style: BorderStyle.solid),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        child: DeviceTimeSelect(
+                          dateTitle: "Start",
+                          date: _startDate,
+                          onCallback: () => _selectFirstDate(context),
+                        ),
                       ),
-                      DeviceTimeSelect(
-                        dateTitle: "End",
-                        date: _endDate,
-                        onCallback: () => _selectSecondDate(context),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        decoration: const ShapeDecoration(
+                          color: Color.fromARGB(255, 236, 238, 238),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                width: 0.5, style: BorderStyle.solid),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        child: DeviceTimeSelect(
+                          dateTitle: "End",
+                          date: _endDate,
+                          onCallback: () => _selectSecondDate(context),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                /*  DeviceDropdown(
-                  devices: snapshot.data![0],
-                  selectedDeviceProps: _firstDeviceProps,
-                  title: "First Device",
-                  deviceChanged: (device) => changeFirstDevice(device),
-                  color: Colors.red,
-                ), */
-                /* const Expanded(
-                  child: SizedBox(),
-                  flex: 4,
-                ), */
                 Expanded(
                   flex: 40,
                   child: PointsLineChart(
                     createGraphData(),
                     animate: true,
                     propTitle: "yeah",
-                    firstTitle: _firstSelectedProp ?? "",
-                    secondTitle: _secondSelectedProp ?? "",
+                    firstTitle: _firstSelectedProp != null
+                        ? "${_firstSelectedDevice?.name} - ${_firstSelectedProp}"
+                        : "",
+                    secondTitle: _secondSelectedProp != null
+                        ? "${_secondSelectedDevice?.name} - ${_secondSelectedProp}"
+                        : "",
                   ),
                 ),
               ],

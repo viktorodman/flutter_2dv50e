@@ -78,15 +78,15 @@ class PointsLineChart extends StatelessWidget {
 
     return [
       charts.Series<DeviceSensorData, DateTime>(
-        id: 'Global Revenue',
-        domainFn: (DeviceSensorData sales, _) => sales.year,
-        measureFn: (DeviceSensorData sales, _) => sales.sales,
+        id: 'first device',
+        domainFn: (DeviceSensorData device, _) => device.date,
+        measureFn: (DeviceSensorData device, _) => device.data,
         data: globalSalesData,
       ),
       charts.Series<DeviceSensorData, DateTime>(
-        id: 'Los Angeles Revenue',
-        domainFn: (DeviceSensorData sales, _) => sales.year,
-        measureFn: (DeviceSensorData sales, _) => sales.sales,
+        id: 'second device',
+        domainFn: (DeviceSensorData device, _) => device.date,
+        measureFn: (DeviceSensorData device, _) => device.data,
         data: losAngelesSalesData,
       )..setAttribute(
           charts.measureAxisIdKey, charts.Axis.secondaryMeasureAxisId)
@@ -103,8 +103,8 @@ class LinearSales {
 }
 
 class DeviceSensorData {
-  final DateTime year;
-  final double sales;
+  final DateTime date;
+  final double data;
 
-  DeviceSensorData(this.year, this.sales);
+  DeviceSensorData(this.date, this.data);
 }

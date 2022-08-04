@@ -83,7 +83,7 @@ class DeviceService {
     }
 
     print("wtf");
-    print(result.first.sales);
+    print(result.first.data);
 
     return result;
   }
