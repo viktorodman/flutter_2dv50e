@@ -84,7 +84,7 @@ class _DeviceTileState extends State<DeviceTile> {
                   onCallback: () => _selectFirstDate(context),
                 ),
                 DeviceTimeSelect(
-                  dateTitle: "Slut",
+                  dateTitle: "End",
                   date: _endDate,
                   onCallback: () => _selectSecondDate(context),
                 ),

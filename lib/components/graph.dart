@@ -34,8 +34,8 @@ class _GraphContentState extends State<GraphContent> {
   String? _secondSelectedProp;
   List<DeviceSensorData> _secondChartData = [];
 
-  DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   initState() {
@@ -50,20 +50,22 @@ class _GraphContentState extends State<GraphContent> {
     Map<String, dynamic> secondDeviceProps = await getDeviceProps(devices[1]);
 
     List<DeviceSensorData> firstChartData = await DeviceService().getChartData(
-      devices[0].id,
-      20,
-      firstDeviceProps.keys
-          .toList()
-          .firstWhere((element) => element != 'dateObserved'),
-    );
+        devices[0].id,
+        20,
+        firstDeviceProps.keys
+            .toList()
+            .firstWhere((element) => element != 'dateObserved'),
+        _startDate,
+        _endDate);
 
     List<DeviceSensorData> secondChartData = await DeviceService().getChartData(
-      devices[1].id,
-      20,
-      secondDeviceProps.keys
-          .toList()
-          .firstWhere((element) => element != 'dateObserved'),
-    );
+        devices[1].id,
+        20,
+        secondDeviceProps.keys
+            .toList()
+            .firstWhere((element) => element != 'dateObserved'),
+        _startDate,
+        _endDate);
 
     setState(() {
       _firstDeviceProps = firstDeviceProps;
@@ -85,8 +87,8 @@ class _GraphContentState extends State<GraphContent> {
   }
 
   Future<Map<String, dynamic>> getDeviceProps(Device device) async {
-    Map<String, dynamic> sensorData =
-        await DeviceService().getDeviceSensorData(device.id, device.deviceType);
+    Map<String, dynamic> sensorData = await DeviceService().getDeviceSensorData(
+        device.id, device.deviceType, _startDate, _endDate);
 
     return sensorData;
   }
@@ -105,32 +107,36 @@ class _GraphContentState extends State<GraphContent> {
     return context.read<DeviceProvider>().devices;
   }
 
-  Future<void> updateFirstChartData(String? propName) async {
+  Future<void> updateFirstChartData(
+      String? propName, sDate, DateTime? eDate) async {
     Map<String, dynamic> firstDeviceProps =
         await getDeviceProps(_firstSelectedDevice!);
     List<DeviceSensorData> chartData = await DeviceService().getChartData(
-      _firstSelectedDevice!.id,
-      20,
-      firstDeviceProps.keys
-          .toList()
-          .firstWhere((element) => element == propName),
-    );
+        _firstSelectedDevice!.id,
+        20,
+        firstDeviceProps.keys
+            .toList()
+            .firstWhere((element) => element == propName),
+        sDate,
+        eDate);
 
     setState(() {
       _firstChartData = chartData;
     });
   }
 
-  Future<void> updateSecondChartData(String? propName) async {
+  Future<void> updateSecondChartData(
+      String? propName, DateTime? sDate, DateTime? eDate) async {
     Map<String, dynamic> secondDeviceProps =
         await getDeviceProps(_secondSelectedDevice!);
     List<DeviceSensorData> chartData = await DeviceService().getChartData(
-      _secondSelectedDevice!.id,
-      20,
-      secondDeviceProps.keys
-          .toList()
-          .firstWhere((element) => element == propName),
-    );
+        _secondSelectedDevice!.id,
+        20,
+        secondDeviceProps.keys
+            .toList()
+            .firstWhere((element) => element == propName),
+        sDate,
+        eDate);
 
     setState(() {
       _secondChartData = chartData;
@@ -138,8 +144,8 @@ class _GraphContentState extends State<GraphContent> {
   }
 
   Future<void> changeFirstDevice(Device? device) async {
-    Map<String, dynamic> newProps = await DeviceService()
-        .getDeviceSensorData(device!.id, device.deviceType);
+    Map<String, dynamic> newProps = await DeviceService().getDeviceSensorData(
+        device!.id, device.deviceType, _startDate, _endDate);
 
     setState(() {
       _firstDeviceProps = newProps;
@@ -157,10 +163,14 @@ class _GraphContentState extends State<GraphContent> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2025),
     );
-    if (picked != null && picked != _startDate)
+    if (picked != null && picked != _startDate) {
+      await updateFirstChartData(_firstSelectedProp, picked, _endDate);
+      await updateSecondChartData(_secondSelectedProp, picked, _endDate);
+
       setState(() {
         _startDate = picked;
       });
+    }
   }
 
   _selectSecondDate(BuildContext context) async {
@@ -170,15 +180,19 @@ class _GraphContentState extends State<GraphContent> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2025),
     );
-    if (picked != null && picked != _endDate)
+    if (picked != null && picked != _endDate) {
+      await updateFirstChartData(_firstSelectedProp, _startDate, picked);
+      await updateSecondChartData(_secondSelectedProp, _startDate, picked);
+
       setState(() {
         _endDate = picked;
       });
+    }
   }
 
   Future<void> changeSecondDevice(Device? device) async {
-    Map<String, dynamic> newProps = await DeviceService()
-        .getDeviceSensorData(device!.id, device.deviceType);
+    Map<String, dynamic> newProps = await DeviceService().getDeviceSensorData(
+        device!.id, device.deviceType, _startDate, _endDate);
 
     setState(() {
       _secondDeviceProps = newProps;
@@ -191,8 +205,8 @@ class _GraphContentState extends State<GraphContent> {
 
   Future<List<dynamic>> updateDeviceProps(
       Device device, List<Device> deviceList) async {
-    Map<String, dynamic> newProps =
-        await DeviceService().getDeviceSensorData(device.id, device.deviceType);
+    Map<String, dynamic> newProps = await DeviceService().getDeviceSensorData(
+        device.id, device.deviceType, _startDate, _endDate);
 
     return <dynamic>[deviceList, newProps];
   }
@@ -243,7 +257,8 @@ class _GraphContentState extends State<GraphContent> {
                         selectedDeviceProps: _firstDeviceProps,
                         firstSelectedPos: 0,
                         selectProp: (selectedProp) {
-                          updateFirstChartData(selectedProp);
+                          updateFirstChartData(
+                              selectedProp, _startDate, _endDate);
                           print(selectedProp);
                           setState(() {
                             _firstSelectedProp = selectedProp;
@@ -261,7 +276,8 @@ class _GraphContentState extends State<GraphContent> {
                         firstSelectedPos: 1,
                         selectedDeviceProps: _secondDeviceProps,
                         selectProp: (selectedProp) {
-                          updateSecondChartData(selectedProp);
+                          updateSecondChartData(
+                              selectedProp, _startDate, _endDate);
                           print(selectedProp);
                           setState(() {
                             _secondSelectedProp = selectedProp;
@@ -296,7 +312,9 @@ class _GraphContentState extends State<GraphContent> {
                         child: DeviceTimeSelect(
                           dateTitle: "Start",
                           date: _startDate,
-                          onCallback: () => _selectFirstDate(context),
+                          onCallback: () {
+                            _selectFirstDate(context);
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -320,7 +338,9 @@ class _GraphContentState extends State<GraphContent> {
                         child: DeviceTimeSelect(
                           dateTitle: "End",
                           date: _endDate,
-                          onCallback: () => _selectSecondDate(context),
+                          onCallback: () {
+                            _selectSecondDate(context);
+                          },
                         ),
                       ),
                     ],

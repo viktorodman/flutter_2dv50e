@@ -128,7 +128,8 @@ class _DeviceMapState extends State<DeviceMap> {
                   : Colors.amber,
               onTap: () async {
                 Map<String, dynamic> yeah = await DeviceService()
-                    .getDeviceSensorData(element.id, element.deviceType);
+                    .getDeviceSensorData(
+                        element.id, element.deviceType, null, null);
                 showDialog(
                     context: context,
                     builder: (BuildContext context) => SimpleDialog(
