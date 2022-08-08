@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2dv50e/routes/routes.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String _initialRoute = RouteManager.dashboard;
 
@@ -9,6 +10,7 @@ void main() async {
   if (isLoggedIn) {
     _initialRoute = RouteManager.dashboard;
   } */
+  await dotenv.load(fileName: ".env");
 
   runApp(MyApp());
 }

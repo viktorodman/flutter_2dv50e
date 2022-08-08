@@ -3,11 +3,12 @@ import 'package:flutter_2dv50e/components/graphs/date-time-line-chart.dart';
 import 'package:flutter_2dv50e/models/device-types/air-quality-observed.dart';
 import 'package:flutter_2dv50e/models/device.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DeviceService {
   Future<List<Device>> getDevices() async {
     final response =
-        await http.get(Uri.parse('http://localhost:4000/v1/device/user/2'));
+        await http.get(Uri.parse(dotenv.env["API_URL"]! + '/v1/device/user/2'));
     try {
       if (response.statusCode == 200) {
         return List<Device>.from(
@@ -28,7 +29,7 @@ class DeviceService {
       String deviceId, String? deviceType) async {
     print(deviceId);
     final response = await http
-        .get(Uri.parse('http://localhost:4000/v1/request/test/$deviceId'));
+        .get(Uri.parse(dotenv.env["API_URL"]! + '/v1/request/test/$deviceId'));
 
     Map<String, dynamic> result = <String, dynamic>{};
 
@@ -52,7 +53,7 @@ class DeviceService {
   Future<List<DeviceSensorData>> getChartData(
       String deviceId, int numberOfResults, String propName) async {
     final response = await http
-        .get(Uri.parse('http://localhost:4000/v1/request/test/$deviceId'));
+        .get(Uri.parse(dotenv.env["API_URL"]! + '/v1/request/test/$deviceId'));
 
     List<DeviceSensorData> result = <DeviceSensorData>[];
 
@@ -95,7 +96,7 @@ class DeviceService {
     String body = jsonEncode(data);
 
     final response = await http.post(
-      Uri.parse("http://localhost:4000/v1/device/$deviceId/info"),
+      Uri.parse(dotenv.env["API_URL"]! + "/v1/device/$deviceId/info"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -7,6 +7,8 @@ import 'package:flutter_2dv50e/models/device.dart';
 import 'package:flutter_2dv50e/utils/time.dart' as time;
 import 'dart:html' as html;
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class DeviceTile extends StatefulWidget {
   const DeviceTile({
     required this.device,
@@ -89,7 +91,7 @@ class _DeviceTileState extends State<DeviceTile> {
                   onCallback: () => _selectSecondDate(context),
                 ),
                 DeviceCSVButton(
-                  baseURL: "http://localhost:4000/v1/request/device/",
+                  baseURL: dotenv.env["API_URL"]! + "/v1/request/device/",
                   startDate: _startDate,
                   endDate: _endDate,
                   deviceId: widget.device.id,
