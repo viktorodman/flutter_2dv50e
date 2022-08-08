@@ -73,7 +73,7 @@ class DeviceService {
       DateTime? startDate,
       DateTime? endDate) async {
     bool hasQuery = false;
-    String link = 'http://localhost:4000/v1/request/test/$deviceId';
+    String link = dotenv.env["API_URL"]! + '/v1/request/test/$deviceId';
 
     if (startDate != null) {
       link += "?startDate=${time.convertDateTimeToString(startDate)}";
