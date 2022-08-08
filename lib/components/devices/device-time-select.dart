@@ -3,7 +3,7 @@ import 'package:flutter_2dv50e/utils/time.dart' as time;
 
 class DeviceTimeSelect extends StatelessWidget {
   final DateTime? date;
-  final Future<Null> Function() onCallback;
+  final Function() onCallback;
   final String dateTitle;
   const DeviceTimeSelect({
     required this.date,
@@ -15,7 +15,9 @@ class DeviceTimeSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      onPressed: () => onCallback(),
+      onPressed: () {
+        onCallback();
+      },
       icon: Text(
         '${dateTitle}: ${date != null ? time.convertDateTimeToString(date!) : ''}',
         style: TextStyle(color: Colors.black),
