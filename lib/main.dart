@@ -10,7 +10,7 @@ void main() async {
   if (isLoggedIn) {
     _initialRoute = RouteManager.dashboard;
   } */
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "env");
 
   runApp(MyApp());
 }

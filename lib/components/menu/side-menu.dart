@@ -3,6 +3,8 @@ import 'package:flutter_2dv50e/components/menu/menu-item.dart';
 import 'package:flutter_2dv50e/providers/main-page-provider.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class SideMenu extends StatelessWidget {
   const SideMenu({Key? key}) : super(key: key);
 
@@ -10,7 +12,7 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        children: const [
+        children: [
           DrawerHeader(
             child: Text(
               'Kalmar Dämme',
@@ -27,12 +29,7 @@ class SideMenu extends StatelessWidget {
             pageState: MainPageState.graph,
             icon: Icons.device_hub_outlined,
           ),
-          MenuItem(text: 'Map', pageState: MainPageState.map, icon: Icons.map),
-          /* MenuItem(
-            text: 'None',
-            pageState: MainPageState.none,
-            icon: Icons.mic_none,
-          ), */
+          /*  MenuItem(text: 'Map', pageState: MainPageState.map, icon: Icons.map), */
         ],
       ),
     );

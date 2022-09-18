@@ -84,11 +84,11 @@ class _DeviceMapState extends State<DeviceMap> {
       ),
     ));
 
-    deviceDescriptions.add(Expanded(
+    /* deviceDescriptions.add(Expanded(
       child: Divider(
         color: Colors.black12,
       ),
-    ));
+    )); */
 
     properties.entries.forEach((element) {
       if (element.key != "dateObserved") {

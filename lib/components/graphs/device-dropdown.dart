@@ -115,7 +115,7 @@ class _DeviceDropdownState extends State<DeviceDropdown> {
               (Device device) {
                 return DropdownMenuItem<String>(
                   child: Text(
-                    device.name,
+                    "${device.deviceType} (${device.name})",
                     style: TextStyle(color: Colors.black),
                   ),
                   value: device.name,
